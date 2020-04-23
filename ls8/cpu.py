@@ -2,15 +2,16 @@
 
 import sys
 
+
 class CPU:
     """Main CPU class."""
 
     def __init__(self):
         self.memory = [0] * 256
         self.reg = [0] * 8
-        self.pc = 0 
-        self.sp = 7 
-        self.reg[self.sp] = 0xF4 #stack pointer
+        self.pc = 0
+        self.sp = 7
+        self.reg[self.sp] = 0xF4  # stack pointer
 
     def load(self, filename):
         """Load a program into memory."""
@@ -18,12 +19,12 @@ class CPU:
 
         # For now, we've just hardcoded a program:
 
-        with open(filename) as f: 
-            for line in f: 
+        with open(filename) as f:
+            for line in f:
                 line = line.split('#')
                 line = line[0].strip()
 
-                if line == '': 
+                if line == '':
                     continue
 
                 self.memory[address] = int(line, 2)
@@ -36,12 +37,12 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
-        elif op == "DEC": 
+        elif op == "DEC":
             self.reg[reg_a] -= self.reg[reg_b]
-        elif op == 'MUL': 
-            
+        elif op == 'MUL':
+
             self.reg[reg_a] *= self.reg[reg_b]
-        elif op == 'DIV': 
+        elif op == 'DIV':
             self.reg[reg_a] / self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
@@ -54,8 +55,8 @@ class CPU:
 
         print(f"TRACE: %02X | %02X %02X %02X |" % (
             self.pc,
-            #self.fl,
-            #self.ie,
+            # self.fl,
+            # self.ie,
             self.ram_read(self.pc),
             self.ram_read(self.pc + 1),
             self.ram_read(self.pc + 2)
@@ -68,9 +69,9 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        
-        #instructions
-        #arithmetic
+
+        # instructions
+        # arithmetic
         ADD = 0b10100000
         SUB = 0b01100110
         DIV = 0b10100011
@@ -84,69 +85,68 @@ class CPU:
         CALL = 0b01010000
 
         running = True
-        while running: 
+        while running:
             IR = self.memory[self.pc]
 
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
 
-            #print value
-            if IR == PRN: 
+            # print value
+            if IR == PRN:
                 address = operand_a
                 print(self.reg[address])
                 self.pc += 2
-            elif IR == LDI: 
+            elif IR == LDI:
                 address = operand_a
                 value = operand_b
                 self.reg[address] = value
                 self.pc += 3
-            #add
-            elif IR == ADD: 
+            # add
+            elif IR == ADD:
                 self.alu('ADD', operand_a, operand_b)
                 self.pc += 3
-            #subtract
-            elif IR == SUB: 
+            # subtract
+            elif IR == SUB:
                 self.alu('DEC', operand_a, operand_b)
                 self.pc += 3
-            #division
-            elif IR == DIV: 
+            # division
+            elif IR == DIV:
                 self.alu('DIV', operand_a, operand_b)
-                self.pc += 3 
-            #multiplication
+                self.pc += 3
+            # multiplication
             elif IR == MUL:
                 self.alu('MUL', operand_a, operand_b)
                 self.pc += 3
-            #stop
-            elif IR == HLT: 
+            # stop
+            elif IR == HLT:
                 running = False
                 self.pc = 0
-            #push
-            elif IR == PUSH: 
-                #decrement sp
-                self.reg[self.sp] -= 1 
-                #get next address for register
+            # push
+            elif IR == PUSH:
+                # decrement sp
+                self.reg[self.sp] -= 1
+                # get next address for register
                 reg_num = self.memory[self.pc + 1]
                 value = self.reg[reg_num]
-                #address in memory to store value in 
+                # address in memory to store value in
                 address = self.reg[self.sp]
                 self.memory[address] = value
                 self.pc += 2
-            #pop
-            elif IR == POP: 
-                #Copy the value from the address pointed to by `SP`
+            # pop
+            elif IR == POP:
+                # Copy the value from the address pointed to by `SP`
                 reg_num = self.memory[self.pc + 1]
                 address = self.reg[self.sp]
                 value = self.memory[address]
                 self.reg[reg_num] = value
-                #Increment `SP`
+                # Increment `SP`
                 self.reg[self.sp] += 1
                 self.pc += 2
-            else: 
+            else:
                 print('instruction not valid!')
-            
 
-    def ram_read(self, address): 
+    def ram_read(self, address):
         return self.memory[address]
 
-    def ram_write(self, address, value): 
+    def ram_write(self, address, value):
         self.memory[address] = value
