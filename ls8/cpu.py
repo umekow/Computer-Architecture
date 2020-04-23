@@ -6,7 +6,7 @@ class CPU:
     """Main CPU class."""
 
     def __init__(self):
-        self.memory = [0] * 256
+        self.memory = [0] * 256 
         self.reg = [0] * 8
         self.pc = 0 
         self.sp = 7 
@@ -97,9 +97,12 @@ class CPU:
                 print(self.reg[address])
                 self.pc += 2
             elif IR == LDI: 
+                #the register to store value
                 address = operand_a
+                #the value
                 value = operand_b
                 self.reg[address] = value
+                #move to next instruction
                 self.pc += 3
             #add
             elif IR == ADD: 
@@ -143,7 +146,9 @@ class CPU:
                 self.reg[self.sp] += 1
                 self.pc += 2
             elif IR == CALL: 
+                #getting return address 
                 return_address = self.pc + 2
+                #push the return address to the stack
                 self.reg[self.sp] -= 1
                 value = self.reg[self.sp]
                 self.memory[value] = return_address
@@ -151,9 +156,11 @@ class CPU:
                 destination = self.reg[reg_num]
                 self.pc = destination
             elif IR == RET: 
+                #pop return address
                 value = self.reg[self.sp]
                 return_address = self.memory[value]
                 self.reg[self.sp] += 1
+                #change the pc to return address or what it was doing before
                 self.pc = return_address
             else: 
                 print('instruction not valid!')
