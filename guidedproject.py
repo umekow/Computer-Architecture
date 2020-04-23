@@ -20,7 +20,6 @@ pc = 0  # counter
 
 running = True
 
-
 while running:
     inst = memory[pc]
 
