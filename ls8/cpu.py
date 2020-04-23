@@ -1,5 +1,4 @@
 """CPU functionality."""
-
 import sys
 
 
