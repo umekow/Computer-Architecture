@@ -82,6 +82,7 @@ class CPU:
         PUSH = 0b01000101
         POP = 0b01000110
         CALL = 0b01010000
+        RET = 0b00010001
 
         running = True
         while running: 
@@ -141,6 +142,19 @@ class CPU:
                 #Increment `SP`
                 self.reg[self.sp] += 1
                 self.pc += 2
+            elif IR == CALL: 
+                return_address = self.pc + 2
+                self.reg[self.sp] -= 1
+                value = self.reg[self.sp]
+                self.memory[value] = return_address
+                reg_num = self.memory[self.pc + 1]
+                destination = self.reg[reg_num]
+                self.pc = destination
+            elif IR == RET: 
+                value = self.reg[self.sp]
+                return_address = self.memory[value]
+                self.reg[self.sp] += 1
+                self.pc = return_address
             else: 
                 print('instruction not valid!')
             
