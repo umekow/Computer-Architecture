@@ -11,8 +11,7 @@ memory = [
     PRINT_UMEKO,
     PRINT_REG,
     0,
-
-    HALT
+    HALT,
 ]
 
 register = [0] * 8
@@ -26,7 +25,7 @@ while running:
     inst = memory[pc]
 
     if inst == 1:
-        print('Umeko Walker')
+        print("Umeko Walker")
         pc += 1
     elif inst == SAVE_REG:
         reg_num = memory[pc + 1]
@@ -42,5 +41,5 @@ while running:
         print(value)
         pc += 2
     else:
-        print('Unknown instruction')
+        print("Unknown instruction")
         running = False
