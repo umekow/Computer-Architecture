@@ -9,11 +9,11 @@ class CPU:
         self.memory = [0] * 256
         self.reg = [0] * 8
         self.pc = 0 
-        
+        self.sp = 7 
+        self.reg[self.sp] = 0xF4 #stack pointer
 
     def load(self, filename):
         """Load a program into memory."""
-
         address = 0
 
         # For now, we've just hardcoded a program:
@@ -31,21 +31,6 @@ class CPU:
                 address += 1
         f.close()
 
-        # program = [
-        #     # From print8.ls8
-        #     0b10000010, # LDI R0,8
-        #     0b00000000,
-        #     0b00001000,
-        #     0b01000111, # PRN R0
-        #     0b00000000,
-        #     0b00000001, # HLT
-        # ]
-
-        # for instruction in program:
-        #     self.memory[address] = instruction
-        #     address += 1
-
-    #arithmetic logic unit is a circuit to peform logic and arithmetic operations
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
 
@@ -85,53 +70,77 @@ class CPU:
         """Run the CPU."""
         
         #instructions
+        #arithmetic
+        ADD = 0b10100000
+        SUB = 0b01100110
+        DIV = 0b10100011
+        MUL = 0b10100010
+
         PRN = 0b01000111
         HLT = 0b00000001
         LDI = 0b10000010
-        r = 0
+        PUSH = 0b01000101
+        POP = 0b01000110
+        CALL = 0b01010000
 
         running = True
         while running: 
             IR = self.memory[self.pc]
-         
 
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
 
             #print value
             if IR == PRN: 
-                print(self.reg[0])
-                self.pc += 1
-            
+                address = operand_a
+                print(self.reg[address])
+                self.pc += 2
             elif IR == LDI: 
-                self.reg[r] = operand_b
+                address = operand_a
+                value = operand_b
+                self.reg[address] = value
                 self.pc += 3
-                r += 1
-
             #add
-            elif IR == 0b10100000: 
+            elif IR == ADD: 
                 self.alu('ADD', operand_a, operand_b)
                 self.pc += 3
-
             #subtract
-            elif IR == 0b01100110: 
+            elif IR == SUB: 
                 self.alu('DEC', operand_a, operand_b)
                 self.pc += 3
-
-
-            elif IR == 0b10100011: 
+            #division
+            elif IR == DIV: 
                 self.alu('DIV', operand_a, operand_b)
+                self.pc += 3 
+            #multiplication
+            elif IR == MUL:
+                self.alu('MUL', operand_a, operand_b)
                 self.pc += 3
-
-            elif IR == 0b10100010:
-                self.alu('MUL', r - 2, r - 1)
-                self.pc += 3
-
+            #stop
             elif IR == HLT: 
                 running = False
                 self.pc = 0
-            elif IR == 0b00000000:
-                self.pc += 1
+            #push
+            elif IR == PUSH: 
+                #decrement sp
+                self.reg[self.sp] -= 1 
+                #get next address for register
+                reg_num = self.memory[self.pc + 1]
+                value = self.reg[reg_num]
+                #address in memory to store value in 
+                address = self.reg[self.sp]
+                self.memory[address] = value
+                self.pc += 2
+            #pop
+            elif IR == POP: 
+                #Copy the value from the address pointed to by `SP`
+                reg_num = self.memory[self.pc + 1]
+                address = self.reg[self.sp]
+                value = self.memory[address]
+                self.reg[reg_num] = value
+                #Increment `SP`
+                self.reg[self.sp] += 1
+                self.pc += 2
             else: 
                 print('instruction not valid!')
             
