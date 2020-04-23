@@ -1,10 +1,10 @@
 10000010 # LDI R0,1 add value stored in the second line from here to register 0
 00000000
-00000001 
+00000001
 10000010 # LDI R1,2 add value stored in the second line from here to register 1
 00000001
 00000010
-01000101 # PUSH R0   
+01000101 # PUSH R0
 00000000
 01000101 # PUSH R1
 00000001
@@ -29,6 +29,3 @@
 01000111 # PRN R1
 00000001
 00000001 # HLT
-
-
-
