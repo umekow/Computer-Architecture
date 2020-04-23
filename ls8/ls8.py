@@ -3,8 +3,8 @@
 """Main."""
 
 import sys
-from cpu import *
 
+from cpu import *
 
 filename = sys.argv[1]
 
