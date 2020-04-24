@@ -97,6 +97,8 @@ class CPU:
         JEQ = 0b01010101
         JNE = 0b01010110
 
+        AND = 0b10101000
+
         running = True
         while running: 
             IR = self.memory[self.pc]
@@ -199,6 +201,8 @@ class CPU:
                     self.pc = self.reg[operand_a]
                 else: 
                     self.pc += 2
+            elif IR == AND: 
+                pass
             else: 
                 print('instruction not valid!')
             
