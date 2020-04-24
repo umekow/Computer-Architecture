@@ -51,6 +51,8 @@ class CPU:
                 self.fl = 0b00000010
             else: 
                 self.fl = 0b00000100
+            
+            #take one bit from each value and multiply it 
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -98,6 +100,12 @@ class CPU:
         JNE = 0b01010110
 
         AND = 0b10101000
+        XOR = 0b10101011
+        OR = 0b10101010
+        NOT = 0b01101001
+        SHL = 0b10101100
+        SHR = 0b
+        MOD = 0b
 
         running = True
         while running: 
@@ -202,6 +210,25 @@ class CPU:
                 else: 
                     self.pc += 2
             elif IR == AND: 
+            #Bitwise-AND the values in registerA and registerB, then store the result in registerA
+                self.alu('AND', self.reg[operand_a], self.reg[operand_b])
+            elif IR == OR: 
+            #Perform a bitwise-OR between the values in registerA and registerB, storing the result in registerA.
+                pass
+            elif IR == XOR: 
+            #Perform a bitwise-XOR between the values in registerA and registerB, storing the result in registerA
+                pass
+            elif IR == NOT: 
+            #Perform a bitwise-NOT on the value in a register, storing the result in the register
+                pass 
+            elif IR == SHL: 
+            #Shift the value in registerA left by the number of bits specified in registerB, filling the low bits with 0.
+                pass
+            elif IR == SHR: 
+            #Shift the value in registerA right by the number of bits specified in registerB, filling the high bits with 0
+                pass
+            elif IR == MOD: 
+            #Divide the value in the first register by the value in the second,storing the _remainder_ of the result in registerA
                 pass
             else: 
                 print('instruction not valid!')
