@@ -22,10 +22,10 @@ class CPU:
 
         with open(filename) as f:
             for line in f:
-                line = line.split('#')
+                line = line.split("#")
                 line = line[0].strip()
 
-                if line == '':
+                if line == "":
                     continue
 
                 self.memory[address] = int(line, 2)
@@ -40,12 +40,12 @@ class CPU:
             self.reg[reg_a] += self.reg[reg_b]
         elif op == "DEC":
             self.reg[reg_a] -= self.reg[reg_b]
-        elif op == 'MUL':
+        elif op == "MUL":
 
             self.reg[reg_a] *= self.reg[reg_b]
-        elif op == 'DIV':
+        elif op == "DIV":
             self.reg[reg_a] / self.reg[reg_b]
-        elif op == 'CMP':
+        elif op == "CMP":
             if reg_a == reg_b:
                 self.fl = 0b00000001
             elif reg_a > reg_b:
@@ -61,17 +61,21 @@ class CPU:
         from run() if you need help debugging.
         """
 
-        print(f"TRACE: %02X | %02X %02X %02X |" % (
-            self.pc,
-            # self.fl,
-            # self.ie,
-            self.ram_read(self.pc),
-            self.ram_read(self.pc + 1),
-            self.ram_read(self.pc + 2)
-        ), end='')
+        print(
+            f"TRACE: %02X | %02X %02X %02X |"
+            % (
+                self.pc,
+                # self.fl,
+                # self.ie,
+                self.ram_read(self.pc),
+                self.ram_read(self.pc + 1),
+                self.ram_read(self.pc + 2),
+            ),
+            end="",
+        )
 
         for i in range(8):
-            print(" %02X" % self.reg[i], end='')
+            print(" %02X" % self.reg[i], end="")
 
         print()
 
@@ -121,19 +125,19 @@ class CPU:
                 self.pc += 3
             # add
             elif IR == ADD:
-                self.alu('ADD', operand_a, operand_b)
+                self.alu("ADD", operand_a, operand_b)
                 self.pc += 3
             # subtract
             elif IR == SUB:
-                self.alu('DEC', operand_a, operand_b)
+                self.alu("DEC", operand_a, operand_b)
                 self.pc += 3
             # division
             elif IR == DIV:
-                self.alu('DIV', operand_a, operand_b)
+                self.alu("DIV", operand_a, operand_b)
                 self.pc += 3
             # multiplication
             elif IR == MUL:
-                self.alu('MUL', operand_a, operand_b)
+                self.alu("MUL", operand_a, operand_b)
                 self.pc += 3
             # stop
             elif IR == HLT:
@@ -182,7 +186,7 @@ class CPU:
                 # get the value of two registers
                 reg_value1 = self.reg[operand_a]
                 reg_value2 = self.reg[operand_b]
-                self.alu('CMP', reg_value1, reg_value2)
+                self.alu("CMP", reg_value1, reg_value2)
                 self.pc += 3
             elif IR == JMP:
                 # Jump to the address stored in the given register
@@ -205,7 +209,7 @@ class CPU:
             elif IR == AND:
                 pass
             else:
-                print('instruction not valid!')
+                print("instruction not valid!")
 
     def ram_read(self, address):
         return self.memory[address]
