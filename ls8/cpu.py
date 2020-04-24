@@ -11,6 +11,7 @@ class CPU:
         self.pc = 0 
         self.sp = 7 
         self.reg[self.sp] = 0xF4 #stack pointer
+        self.fl = 0b00000000
 
     def load(self, filename):
         """Load a program into memory."""
@@ -43,6 +44,13 @@ class CPU:
             self.reg[reg_a] *= self.reg[reg_b]
         elif op == 'DIV': 
             self.reg[reg_a] / self.reg[reg_b]
+        elif op == 'CMP': 
+            if reg_a == reg_b: 
+                self.fl = 0b00000001
+            elif reg_a > reg_b: 
+                self.fl = 0b00000010
+            else: 
+                self.fl = 0b00000100
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -84,13 +92,17 @@ class CPU:
         CALL = 0b01010000
         RET = 0b00010001
 
+        CMP = 0b10100111
+        JMP = 0b01010100
+        JEQ = 0b01010101
+        JNE = 0b01010110
+
         running = True
         while running: 
             IR = self.memory[self.pc]
-
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
-
+ 
             #print value
             if IR == PRN: 
                 address = operand_a
@@ -162,6 +174,31 @@ class CPU:
                 self.reg[self.sp] += 1
                 #change the pc to return address or what it was doing before
                 self.pc = return_address
+            elif IR == CMP: 
+            #compares the values of two registers
+                #get the value of two registers
+                reg_value1 = self.reg[operand_a]
+                reg_value2 = self.reg[operand_b]
+                self.alu('CMP', reg_value1, reg_value2)
+                self.pc += 3
+            elif IR == JMP: 
+            #Jump to the address stored in the given register
+            # Set the `PC` to the address stored in the given register
+                address = self.reg[operand_a]
+                self.pc = address
+                
+            elif IR == JEQ: 
+            #If `equal` flag is set (true), jump to the address stored in the given register
+                if self.fl == 0b00000001: 
+                    self.pc = self.reg[operand_a]
+                else: 
+                    self.pc += 2
+            elif IR == JNE: 
+            #If `E` flag is clear (false, 0), jump to the address stored in the given register.
+                if self.fl != 0b00000001: 
+                    self.pc = self.reg[operand_a]
+                else: 
+                    self.pc += 2
             else: 
                 print('instruction not valid!')
             
